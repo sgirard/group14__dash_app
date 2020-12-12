@@ -17,6 +17,8 @@ server = app.server
 # Load CSV file from Datasets folder
 df1 = pd.read_csv('ForeignExchange.csv')
 
+###################### Begin First Graph ###################
+
 new_df = df1
 
 dfDecade = df1
@@ -37,6 +39,8 @@ trace2_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['EURO AREA 
 trace3_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['NEW ZEALAND - NEW ZELAND DOLLAR/US$'],
                               mode='lines', name='NEW ZEALAND - NEW ZELAND DOLLAR/US$')
 data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline]
+
+################### End First Graph ########################
 
 # Get the conversion rate for the currencies (most recent data)
 df_aud = df1['AUSTRALIA - AUSTRALIAN DOLLAR/US$'].iloc[-1]
@@ -180,9 +184,8 @@ app.layout = html.Div([
 
 ########################### First Graph #############################
 
-
     html.Hr(),
-    html.H3('Multi Line chart', style={'color': '#df1e56'}),
+    html.H3('Multi Line chart'),
     dcc.Graph(id='graph1',
               figure={
                   'data': data_multiline,
@@ -203,8 +206,59 @@ app.layout = html.Div([
         value='Year'
     ),
     html.Hr(),
+#])
+
+######################### End First Graph ####################
+######################## Begin Second Graph ##################
+
+# html.H1(children='Python Dash',
+#         style={
+#             'textAlign': 'center',
+#             'color': '#ef3e18'
+#         }
+#         ),
+# html.Hr(style={'color': '#7FDBFF'}),
+html.H3('Multi Line chart', style={'color': '#df1e56'}),
+dcc.Graph(id='graph2',
+          figure={
+              'data': data_multiline,
+              'layout': go.Layout(
+                  title='Foreign Exchange Rate 2000-2019',
+                  xaxis={'title': 'Time'}, yaxis={'title': 'Exchange Rate'})
+          }
+          ),
+html.Div('Please select a currency', style={'color': '#ef3e18', 'margin': '10px'}),
+dcc.Dropdown(id='select-currency',
+    options=[
+        {'label': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$', 'value': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$'},
+        {'label': 'EURO AREA - EURO/US$', 'value': 'EURO AREA - EURO/US$'},
+        {'label': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$', 'value': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$'},
+        {'label': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$', 'value': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$'},
+        {'label': 'BRAZIL - REAL/US$', 'value': 'BRAZIL - REAL/US$'},
+        {'label': 'CANADA - CANADIAN DOLLAR/US$', 'value': 'CANADA - CANADIAN DOLLAR/US$'},
+        {'label': 'CHINA - YUAN/US$', 'value': 'CHINA - YUAN/US$'},
+        {'label': 'HONG KONG - HONG KONG DOLLAR/US$', 'value': 'HONG KONG - HONG KONG DOLLAR/US$'},
+        {'label': 'INDIA - INDIAN RUPEE/US$', 'value': 'INDIA - INDIAN RUPEE/US$'},
+        {'label': 'KOREA - WON/US$', 'value': 'KOREA - WON/US$'},
+        {'label': 'MEXICO - MEXICAN PESO/US$', 'value': 'MEXICO - MEXICAN PESO/US$'},
+        {'label': 'SOUTH AFRICA - RAND/US$', 'value': 'SOUTH AFRICA - RAND/US$'},
+        {'label': 'SINGAPORE - SINGAPORE DOLLAR/US$', 'value': 'SINGAPORE - SINGAPORE DOLLAR/US$'},
+        {'label': 'DENMARK - DANISH KRONE/US$', 'value': 'DENMARK - DANISH KRONE/US$'},
+        {'label': 'JAPAN - YEN/US$', 'value': 'JAPAN - YEN/US$'},
+        {'label': 'MALAYSIA - RINGGIT/US$', 'value': 'MALAYSIA - RINGGIT/US$'},
+        {'label': 'NORWAY - NORWEGIAN KRONE/US$', 'value': 'NORWAY - NORWEGIAN KRONE/US$'},
+        {'label': 'SWEDEN - KRONA/US$', 'value': 'SWEDEN - KRONA/US$'},
+        {'label': 'SRI LANKA - SRI LANKAN RUPEE/US$', 'value': 'SRI LANKA - SRI LANKAN RUPEE/US$'},
+        {'label': 'SWITZERLAND - FRANC/US$', 'value': 'SWITZERLAND - FRANC/US$'},
+        {'label': 'TAIWAN - NEW TAIWAN DOLLAR/US$', 'value': 'TAIWAN - NEW TAIWAN DOLLAR/US$'},
+        {'label': 'THAILAND - BAHT/US$', 'value': 'THAILAND - BAHT/US$'},
+    ],
+    value='AUSTRALIA - AUSTRALIAN DOLLAR/US$',
+             )
 ])
 
+
+######################## End Second Graph ####################
 
 @app.callback(
     Output('aud', 'children'),
@@ -305,8 +359,29 @@ def update_message(value, value2):
         return message
 
 
-###############################################
+######################### Begin First Graph Callback ######################
 
+
+# @app.callback(Output('graph1', 'figure'), [Input('select-timeframe', 'value')])
+
+
+################### End First Graph Callback ##############################
+######################### Begin Second Graph ##############################
+
+@app.callback(Output('graph2', 'figure'), [Input('select-currency', 'value')])
+def update_figure(selected_currency):
+    if selected_currency is None:
+        raise PreventUpdate
+    else:
+        country = selected_currency
+        trace1_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df[country],
+                                  mode='lines', name=country)
+        data_multiline = [trace1_multiline]
+
+    return {'data': data_multiline,
+            'layout': go.Layout(title='Foreign Exchange Rates for ' + selected_currency,
+                                xaxis={'title': 'Time'},
+                                yaxis={'title': 'Exchange Rate'})}
 
 @app.callback(Output('graph1', 'figure'), [Input('select-timeframe', 'value')])
 def update_figure(selected_timeframe):
@@ -341,7 +416,10 @@ def update_figure(selected_timeframe):
                                 xaxis={'title': 'Time'},
                                 yaxis={'title': 'Exchange Rate'})}
 
-######################### Second Graph #################################
+
+################### End Second Graph Callback #############################
+
+
 
 
 if __name__ == '__main__':
