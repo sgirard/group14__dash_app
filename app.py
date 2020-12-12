@@ -14,7 +14,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 # Load CSV file from Datasets folder
-df1 = pd.read_csv('../Datasets/ForeignExchange.csv')
+df1 = pd.read_csv('ForeignExchange.csv')
 
 # Get the conversion rate for the currencies (most recent data)
 df_aud = df1['AUSTRALIA - AUSTRALIAN DOLLAR/US$'].iloc[-1]
