@@ -639,4 +639,4 @@ def update_figure3(selected_currency1, selected_currency2, n_clicks, selected_ti
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
