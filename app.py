@@ -8,14 +8,16 @@ import plotly.graph_objs as go
 from html import unescape
 from dash.exceptions import PreventUpdate
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-# external_stylesheets = ['bootstrap.css']
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# external_stylesheets = ['http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css']
+# external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, serve_locally=True)
 server = app.server
 
 # Load CSV file from Datasets folder
-df1 = df2 = new_df = new_df2 = pd.read_csv('ForeignExchange.csv')
+df1 = new_df = new_df2 = pd.read_csv('ForeignExchange.csv') #df2
 
 dfDecade = df1
 dfDecade['Date'] = pd.to_datetime(dfDecade['Date'])
@@ -66,36 +68,35 @@ df_usd = 1.0
 # Global Variables
 from_conversion_symbol = 'USD'
 to_conversion_symbol = 'USD'
-amount_value = 0.0
-converted_value = 0.0
+amount_value: float = 0.0
+converted_value: float = 0.0
 message = ""
 selected_currency = ""
 
 data_frame_label = {
-        'Australian Dollar':'AUSTRALIA - AUSTRALIAN DOLLAR/US$',
-        'Euro Members':'EURO AREA - EURO/US$',
-        'New Zealand Dollar':'NEW ZEALAND - NEW ZELAND DOLLAR/US$',
-        'United Kingdom Pound':'UNITED KINGDOM - UNITED KINGDOM POUND/US$',
-        'Brazil Real':'BRAZIL - REAL/US$',
-        'Canada Dollar':'CANADA - CANADIAN DOLLAR/US$',
-        'China Yuan':'CHINA - YUAN/US$',
-        'Hong Kong Dollar':'HONG KONG - HONG KONG DOLLAR/US$',
-        'India Rupee':'INDIA - INDIAN RUPEE/US$',
-        'South Korea Won':'KOREA - WON/US$',
-        'Mexico Peso':'MEXICO - MEXICAN PESO/US$',
-        'South Africa Rand':'SOUTH AFRICA - RAND/US$',
-        'Singapore Dollar':'SINGAPORE - SINGAPORE DOLLAR/US$',
-        'Denmark Krone':'DENMARK - DANISH KRONE/US$',
-        'Japan' + unescape('&nbsp;') + 'Yen':'JAPAN - YEN/US$',
-        'Malaysia Ringgit':'MALAYSIA - RINGGIT/US$',
-        'Norway Krone':'NORWAY - NORWEGIAN KRONE/US$',
-        'Sweden Krona':'SWEDEN - KRONA/US$',
-        'Sri Lanka Rupee':'SRI LANKA - SRI LANKAN RUPEE/US$',
-        'Switzerland Franc':'SWITZERLAND - FRANC/US$',
-        'Taiwan New Dollar':'TAIWAN - NEW TAIWAN DOLLAR/US$',
-        'Thailand Baht':'THAILAND - BAHT/US$',
-}
-
+                    'AUSTRALIA - AUSTRALIAN DOLLAR/US$':'Australian Dollar',
+                    'EURO AREA - EURO/US$':'Euro Members',
+                    'NEW ZEALAND - NEW ZELAND DOLLAR/US$':'New Zealand Dollar',
+                    'UNITED KINGDOM - UNITED KINGDOM POUND/US$':'United Kingdom Pound',
+                    'BRAZIL - REAL/US$':'Brazil Real',
+                    'CANADA - CANADIAN DOLLAR/US$':'Canada Dollar',
+                    'CHINA - YUAN/US$':'China Yuan',
+                    'HONG KONG - HONG KONG DOLLAR/US$':'Hong Kong Dollar',
+                    'INDIA - INDIAN RUPEE/US$':'India Rupee',
+                    'KOREA - WON/US$':'South Korea Won',
+                    'MEXICO - MEXICAN PESO/US$':'Mexico Peso',
+                    'SOUTH AFRICA - RAND/US$':'South Africa Rand',
+                    'SINGAPORE - SINGAPORE DOLLAR/US$':'Singapore Dollar',
+                    'DENMARK - DANISH KRONE/US$':'Denmark Krone',
+                    'JAPAN - YEN/US$':'Japan' + unescape('&nbsp;') + 'Yen',
+                    'MALAYSIA - RINGGIT/US$':'Malaysia Ringgit',
+                    'NORWAY - NORWEGIAN KRONE/US$':'Norway Krone',
+                    'SWEDEN - KRONA/US$':'Sweden Krona',
+                    'SRI LANKA - SRI LANKAN RUPEE/US$':'Sri Lanka Rupee',
+                    'SWITZERLAND - FRANC/US$':'Switzerland Franc',
+                    'TAIWAN - NEW TAIWAN DOLLAR/US$':'Taiwan New Dollar',
+                    'THAILAND - BAHT/US$':'Thailand Baht',
+                    }
 
 conversion_dict = {
                     'AUD':df_aud, 'BRL':df_brl, 'CAD':df_cad, 'CHF':df_chf, 'CNY':df_cny,
@@ -118,36 +119,40 @@ long_name_dict = {
                 }
 
 dropdown_options = [
-    {'label': 'Australian Dollar', 'value': 'AUD'},
-    {'label': 'Brazil Real', 'value': 'BRL'},
-    {'label': 'Canada Dollar', 'value': 'CAD'},
-    {'label': 'China Yuan', 'value': 'CNY'},
-    {'label': 'Denmark Krone', 'value': 'DKK'},
-    {'label': 'Euro Members', 'value': 'EUR'},
-    {'label': 'Hong Kong Dollar', 'value': 'HKD'},
-    {'label': 'India Rupee', 'value': 'INR'},
-    {'label': 'Japan' + unescape('&nbsp;') + 'Yen', 'value': 'JPY'},
-    {'label': 'Malaysia Ringgit', 'value': 'MYR'},
-    {'label': 'Mexico Peso', 'value': 'MXN'},
-    {'label': 'New Zealand Dollar', 'value': 'NZD'},
-    {'label': 'Norway Krone', 'value': 'NOK'},
-    {'label': 'Singapore Dollar', 'value': 'SGD'},
-    {'label': 'South Africa Rand', 'value': 'ZAR'},
-    {'label': 'South Korea Won', 'value': 'KRW'},
-    {'label': 'Sri Lanka Rupee', 'value': 'LKR'},
-    {'label': 'Sweden Krona', 'value': 'SEK'},
-    {'label': 'Switzerland Franc', 'value': 'CHF'},
-    {'label': 'Taiwan New Dollar', 'value': 'TWD'},
-    {'label': 'Thailand Baht', 'value': 'THB'},
-    {'label': 'United Kingdom Pound', 'value': 'GBP'},
-    {'label': 'U.S. Dollar', 'value': 'USD'},
-]
+                    {'label': 'Australian Dollar', 'value': 'AUD'},
+                    {'label': 'Brazil Real', 'value': 'BRL'},
+                    {'label': 'Canada Dollar', 'value': 'CAD'},
+                    {'label': 'China Yuan', 'value': 'CNY'},
+                    {'label': 'Denmark Krone', 'value': 'DKK'},
+                    {'label': 'Euro Members', 'value': 'EUR'},
+                    {'label': 'Hong Kong Dollar', 'value': 'HKD'},
+                    {'label': 'India Rupee', 'value': 'INR'},
+                    {'label': 'Japan' + unescape('&nbsp;') + 'Yen', 'value': 'JPY'},
+                    {'label': 'Malaysia Ringgit', 'value': 'MYR'},
+                    {'label': 'Mexico Peso', 'value': 'MXN'},
+                    {'label': 'New Zealand Dollar', 'value': 'NZD'},
+                    {'label': 'Norway Krone', 'value': 'NOK'},
+                    {'label': 'Singapore Dollar', 'value': 'SGD'},
+                    {'label': 'South Africa Rand', 'value': 'ZAR'},
+                    {'label': 'South Korea Won', 'value': 'KRW'},
+                    {'label': 'Sri Lanka Rupee', 'value': 'LKR'},
+                    {'label': 'Sweden Krona', 'value': 'SEK'},
+                    {'label': 'Switzerland Franc', 'value': 'CHF'},
+                    {'label': 'Taiwan New Dollar', 'value': 'TWD'},
+                    {'label': 'Thailand Baht', 'value': 'THB'},
+                    {'label': 'United Kingdom Pound', 'value': 'GBP'},
+                    {'label': 'U.S. Dollar', 'value': 'USD'},
+                   ]
 
 
 
 app.layout = html.Div([
+    html.Div(style={'text-align': 'center'}, children=[
+    html.I(className='fa d-block fa-bullseye fa-5x mb-4 text-info'),
+    html.H2('Foreign Currency Exchange', style={'color': '#559C3E'}),
+    ]),
 
-    html.H6('Convert from:', style={'color': '#666'}),
+    html.H6('Convert from:', style={'color': '#559C3E'}),
     dcc.Dropdown(
         id='convert_from-dropdown',
         options=dropdown_options,
@@ -157,7 +162,7 @@ app.layout = html.Div([
 
     html.Div(id='convert_from-output-container'),
 
-    html.H6('Convert to:', style={'color': '#666'}),
+    html.H6('Convert to:', style={'color': '#559C3E'}),
     dcc.Dropdown(
         id='convert_to-dropdown',
         options=dropdown_options,
@@ -167,7 +172,7 @@ app.layout = html.Div([
 
     html.Div(id='convert_to-output-container'),
 
-    html.H6('Amount', style={'color': '#666'}),
+    html.H6('Amount', style={'color': '#559C3E'}),
     dcc.Input(
         id='num-amount',
         type='number',
@@ -175,12 +180,15 @@ app.layout = html.Div([
         placeholder=0.00,
     ),
 
-    html.H4(id='message_container'),
+    html.H5(id='message_container', style={'color': '#559C3E', 'margin': '10px'}),
     html.Hr(),
 
-    html.H6('All Currencies:', style={'color': '#666'}),
+    html.H6('All Currencies:', style={'color': '#559C3E'}),
+    html.Div(className='row', children=[
+    html.Div(style={'display': 'inline-block'}, className='six columns', children=[
     html.Table([
-        html.Tr([html.Td(html.H6('Currency')), html.Td(html.H6('Symbols')), html.Td(html.H6(' ')), html.Td(html.H6('Value'))]),
+        html.Tr([html.Td(html.H6('Currency', style={'color': '#3C77AF'})), html.Td(html.H6('Symbols', style={'color': '#3C77AF'})),
+        html.Td(html.H6(' ')), html.Td(html.H6('Value', style={'color': '#3C77AF'}))]),
         html.Tr([html.Td('Australia Dollar'), html.Td('AUD'), html.Td('A' + unescape('&#36;')), html.Td(id='aud')]),
         html.Tr([html.Td('Brazil Real'), html.Td(['BRL', ]), html.Td('R'+ unescape('&#36;')), html.Td(id='brl')]),
         html.Tr([html.Td('Canada Dollar'), html.Td(['CAD', ]), html.Td('C'+ unescape('&#36;')), html.Td(id='cad')]),
@@ -192,7 +200,14 @@ app.layout = html.Div([
         html.Tr([html.Td('Japan Yen'), html.Td(['JPY', ]), html.Td(unescape('&#165;')), html.Td(id='jpy')]),
         html.Tr([html.Td('Malaysia Ringgit'), html.Td(['MYR', ]), html.Td('RM'), html.Td(id='myr')]),
         html.Tr([html.Td('Mexico Peso'), html.Td(['MXN', ]), html.Td('Mex' + unescape('&#36;')), html.Td(id='mxn')]),
-        html.Tr([html.Td('New Zealand Dollar'), html.Td(['NZD', ]), html.Td('NZ' + unescape('&#36;')), html.Td(id='nzd')]),
+        html.Tr(
+        [html.Td('New Zealand Dollar'), html.Td(['NZD', ]), html.Td('NZ' + unescape('&#36;')), html.Td(id='nzd')]),
+        ]),
+    ]),
+    html.Div(className='five columns', children=[
+    html.Table([
+        html.Tr([html.Td(html.H6('Currency', style={'color': '#3C77AF'})), html.Td(html.H6('Symbols', style={'color': '#3C77AF'})),
+        html.Td(html.H6(' ')), html.Td(html.H6('Value', style={'color': '#3C77AF'}))]),
         html.Tr([html.Td('Norway Krone'), html.Td(['NOK', ]), html.Td('kr'), html.Td(id='nok')]),
         html.Tr([html.Td('Singapore Dollar'), html.Td(['SGD', ]), html.Td('S' + unescape('&#36;')), html.Td(id='sgd')]),
         html.Tr([html.Td('South Africa Rand'), html.Td(['ZAR', ]), html.Td('R'), html.Td(id='zar')]),
@@ -204,12 +219,14 @@ app.layout = html.Div([
         html.Tr([html.Td('Thailand Baht'), html.Td(['THB', ]), html.Td(unescape('&#3647;')), html.Td(id='thb')]),
         html.Tr([html.Td('United Kingdom Pound'), html.Td(['GBP', ]), html.Td(unescape('&#163;')), html.Td(id='gbp')]),
         html.Tr([html.Td('U.S. Dollar'), html.Td(['USD', ]), html.Td('$'), html.Td(id='usd')]),
+        ]),
+    ]),
     ]),
 
 ########################### First Graph #############################
 
     html.Hr(),
-    html.H3('Multi Line chart'),
+    html.H3('High Level Overview', style={'color': '#559C3E'}),
     dcc.Graph(id='graph1',
               figure={
                   'data': data_multiline,
@@ -219,7 +236,7 @@ app.layout = html.Div([
               }
               ),
 
-    html.Div('Please select a timeframe', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.Div('Please select a timeframe', style={'color': '#F7B02', 'margin': '10px'}),
     dcc.Dropdown(
         id='select-timeframe',
         options=[
@@ -230,12 +247,8 @@ app.layout = html.Div([
         value='Year'
     ),
     html.Hr(),
-#])
 
-######################### End First Graph ####################
-######################## Begin Second Graph ##################
-
-html.H3('Multi Line chart', style={'color': '#df1e56'}),
+html.H3('Single Currency Focus', style={'color': '#559C3E'}),
 dcc.Graph(id='graph2',
           figure={
               'data': data_multiline,
@@ -244,13 +257,7 @@ dcc.Graph(id='graph2',
                   xaxis={'title': 'Time'}, yaxis={'title': 'Exchange Rate'})
           }
           ),
-html.Div('Please select a currency', style={'color': '#ef3e18', 'margin': '10px'}),
-# dcc.Dropdown(
-#         id='select-currency',
-#         options=data_frame_label,
-#         placeholder="Select a currency",
-#         value='AUSTRALIA - AUSTRALIAN DOLLAR/US$',
-#     ),
+html.Div('Please select a currency', style={'color': '#F7B02', 'margin': '10px'}),
 dcc.Dropdown(
     id='select-currency',
     placeholder="Select a currency",
@@ -281,21 +288,19 @@ dcc.Dropdown(
     value='AUSTRALIA - AUSTRALIAN DOLLAR/US$',
     ),
 
-
-######################## End Second Graph ####################
 #################### Begin Third Graph #######################
 
     html.Hr(),
-    html.H3('Multi Line chart', style={'color': '#df1e56'}),
+    html.H3('Currency Comparison', style={'color': '#559C3E'}),
     dcc.Graph(id='graph3',
               figure={
                   'data': data_multiline,
                   'layout': go.Layout(
                       title='Foreign Exchange Rate 2000-2019',
-                      xaxis={'title': 'Time'}, yaxis={'title': 'Exchange Rate'})
+                      xaxis={'title': 'Time'}, yaxis={'title': 'Exchange Rate'}),
               }
               ),
-    html.Div('Please select a first country to compare.', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.Div('Please select a first country to compare.', style={'color': '#F7B02', 'margin': '10px'}),
     dcc.Dropdown(
         id='comparison1',
         placeholder="Select a currency",
@@ -325,7 +330,7 @@ dcc.Dropdown(
         ],
         value='AUSTRALIA - AUSTRALIAN DOLLAR/US$'
     ),
-    html.Div('Please select a second country to compare.', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.Div('Please select a second country to compare.', style={'color': '#F7B02', 'margin': '10px'}),
     dcc.Dropdown(
         id='comparison2',
         placeholder="Select a currency",
@@ -355,7 +360,7 @@ dcc.Dropdown(
         ],
         value='EURO AREA - EURO/US$'
     ),
-    html.Div('Please enter a year between 2000 and 2019 to filter timeframe of the graph.', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.Div('Please enter a year between 2000 and 2019 to filter timeframe of the graph.', style={'color': '#F7B02', 'margin': '10px'}),
     html.Div(dcc.Input(id='timeframe2', type='text')),
     html.Br(),
     html.Button('Submit', id='button'),
@@ -465,16 +470,7 @@ def update_message(value, value2):
             long_name_dict[to_conversion_symbol])] # to_conversion_symbol)]
         return message
 
-
-######################### Begin First Graph Callback ######################
-
-
-# @app.callback(Output('graph1', 'figure'), [Input('select-timeframe', 'value')])
-
-
-################### End First Graph Callback ##############################
 ######################### Begin Second Graph ##############################
-#selected_currency = conversion_dict['value']
 
 @app.callback(Output('graph2', 'figure'), [Input('select-currency', 'value')])
 def update_figure(selected_currency):
@@ -485,11 +481,11 @@ def update_figure(selected_currency):
     else:
         country = selected_currency
         trace1_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df[country],
-                                  mode='lines', name=country)
+                                  mode='lines', name=data_frame_label[country])
         data_multiline = [trace1_multiline]
 
     return {'data': data_multiline,
-            'layout': go.Layout(title='Foreign Exchange Rates for ' + selected_currency,
+            'layout': go.Layout(title='Foreign Exchange Rates for ' + data_frame_label[selected_currency],
                                 xaxis={'title': 'Time'},
                                 yaxis={'title': 'Exchange Rate'})}
 
@@ -510,15 +506,15 @@ def update_figure(selected_timeframe):
     filtered_df = filtered_df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
     trace1_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df['AUSTRALIA - AUSTRALIAN DOLLAR/US$'],
                                   mode='lines',
-                                  name='AUSTRALIA - AUSTRALIAN DOLLAR/US$')
+                                  name='AUD/US$')
 
     trace2_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df['EURO AREA - EURO/US$'],
                                   mode='lines',
-                                  name='EURO AREA - EURO/US$')
+                                  name='EUR/US$')
 
     trace3_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df['NEW ZEALAND - NEW ZELAND DOLLAR/US$'],
                                   mode='lines',
-                                  name='NEW ZEALAND - NEW ZELAND DOLLAR/US$')
+                                  name='NZD/US$')
 
     data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline]
     return {'data': data_multiline,
@@ -546,15 +542,15 @@ def update_figure2(selected_currency1, selected_currency2, n_clicks, selected_ti
                     filtered_df = dfCurrentTime
         filtered_df = filtered_df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
         newTrace1_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df[currency1],
-                                    mode='lines', name=currency1)
+                                    mode='lines', name=data_frame_label[currency1])
         newTrace2_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df[currency2], mode='lines',
-                                    name=currency2)
+                                    name=data_frame_label[currency2])
         data_multiline2 = [newTrace1_multiline, newTrace2_multiline]
     return {'data': data_multiline2,
-            'layout': go.Layout(title='Foreign Exchange Rates for ' + selected_currency1 + ' and' + selected_currency2,
+            'layout': go.Layout(title='Foreign Exchange Rates for ' + data_frame_label[selected_currency1] + ' and' + data_frame_label[selected_currency2],
                                 xaxis={'title': 'Time'},
                                 yaxis={'title': 'Exchange Rate'})}
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
