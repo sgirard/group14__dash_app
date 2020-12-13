@@ -8,13 +8,21 @@ import plotly.graph_objs as go
 from html import unescape
 from dash.exceptions import PreventUpdate
 
-# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', 'http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css']
 # external_stylesheets = ['http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css']
 # external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
 # app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app = dash.Dash(__name__, serve_locally=True)
+app = dash.Dash(__name__, serve_locally=False)
 server = app.server
+
+# Global Variables
+from_conversion_symbol = 'USD'
+to_conversion_symbol = 'USD'
+amount_value: float = 0.0
+converted_value: float = 0.0
+message = ""
+selected_currency = ""
 
 # Load CSV file from Datasets folder
 df1 = new_df = new_df2 = pd.read_csv('ForeignExchange.csv') #df2
@@ -30,13 +38,57 @@ dfCurrentYear = dfYear[dfYear['Date'].dt.year == 2019]
 new_df['Date'] = pd.to_datetime(new_df['Date'])
 
 multiline_df = df1
+
 trace1_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['AUSTRALIA - AUSTRALIAN DOLLAR/US$'], mode='lines',
-                              name='AUSTRALIA - AUSTRALIAN DOLLAR/US$')
+                              name='AUD/US$')
 trace2_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['EURO AREA - EURO/US$'], mode='lines',
-                              name='EURO AREA - EURO/US$')
+                              name='EUR/US$')
 trace3_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['NEW ZEALAND - NEW ZELAND DOLLAR/US$'],
-                              mode='lines', name='NEW ZEALAND - NEW ZELAND DOLLAR/US$')
-data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline]
+                              mode='lines', name='NZD/US$')
+trace4_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['UNITED KINGDOM - UNITED KINGDOM POUND/US$'],
+                              mode='lines', name='GBP/US$')
+trace5_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['BRAZIL - REAL/US$'],
+                              mode='lines', name='BRL/US$')
+trace6_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['CANADA - CANADIAN DOLLAR/US$'],
+                              mode='lines', name='CAD/US$')
+trace7_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['CHINA - YUAN/US$'],
+                              mode='lines', name='CNY/US$')
+trace8_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['HONG KONG - HONG KONG DOLLAR/US$'],
+                              mode='lines', name='HKD/US$')
+trace9_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['INDIA - INDIAN RUPEE/US$'],
+                              mode='lines', name='INR/US$')
+trace10_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['KOREA - WON/US$'],
+                              mode='lines', name='KRW/US$')
+trace11_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['MEXICO - MEXICAN PESO/US$'],
+                              mode='lines', name='MXN/US$')
+trace12_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['SOUTH AFRICA - RAND/US$'],
+                              mode='lines', name='ZAR/US$')
+trace13_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['SINGAPORE - SINGAPORE DOLLAR/US$'],
+                              mode='lines', name='SGD/US$')
+trace14_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['DENMARK - DANISH KRONE/US$'],
+                              mode='lines', name='DKK/US$')
+trace15_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['JAPAN - YEN/US$'],
+                              mode='lines', name='JPY/US$')
+trace16_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['MALAYSIA - RINGGIT/US$'],
+                              mode='lines', name='MYR/US$')
+trace17_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['NORWAY - NORWEGIAN KRONE/US$'],
+                              mode='lines', name='NOK/US$')
+trace18_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['SWEDEN - KRONA/US$'],
+                              mode='lines', name='SEK/US$')
+trace19_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['SRI LANKA - SRI LANKAN RUPEE/US$'],
+                              mode='lines', name='LKR/US$')
+trace20_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['SWITZERLAND - FRANC/US$'],
+                              mode='lines', name='CHF/US$')
+trace21_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['TAIWAN - NEW TAIWAN DOLLAR/US$'],
+                              mode='lines', name='TWD/US$')
+trace22_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['THAILAND - BAHT/US$'],
+                              mode='lines', name='THB/US$')
+
+data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline, trace4_multiline,
+                  trace5_multiline, trace6_multiline, trace7_multiline, trace8_multiline,
+                  trace11_multiline, trace12_multiline,
+                  trace13_multiline,trace14_multiline, trace16_multiline,
+                  trace17_multiline, trace18_multiline, trace20_multiline,]
 
 data_duoline = [trace1_multiline, trace2_multiline]
 
@@ -64,14 +116,6 @@ df_chf = df1['SWITZERLAND - FRANC/US$'].iloc[-1]
 df_twd = df1['TAIWAN - NEW TAIWAN DOLLAR/US$'].iloc[-1]
 df_thb = df1['THAILAND - BAHT/US$'].iloc[-1]
 df_usd = 1.0
-
-# Global Variables
-from_conversion_symbol = 'USD'
-to_conversion_symbol = 'USD'
-amount_value: float = 0.0
-converted_value: float = 0.0
-message = ""
-selected_currency = ""
 
 data_frame_label = {
                     'AUSTRALIA - AUSTRALIAN DOLLAR/US$':'Australian Dollar',
@@ -176,7 +220,7 @@ app.layout = html.Div([
     dcc.Input(
         id='num-amount',
         type='number',
-        debounce=True,
+        debounce=False,
         placeholder=0.00,
     ),
 
@@ -294,7 +338,7 @@ dcc.Dropdown(
     html.H3('Currency Comparison', style={'color': '#559C3E'}),
     dcc.Graph(id='graph3',
               figure={
-                  'data': data_multiline,
+                  'data': data_duoline,
                   'layout': go.Layout(
                       title='Foreign Exchange Rate 2000-2019',
                       xaxis={'title': 'Time'}, yaxis={'title': 'Exchange Rate'}),
@@ -470,10 +514,10 @@ def update_message(value, value2):
             long_name_dict[to_conversion_symbol])] # to_conversion_symbol)]
         return message
 
-######################### Begin Second Graph ##############################
+######################### Second Graph Callback ##############################
 
 @app.callback(Output('graph2', 'figure'), [Input('select-currency', 'value')])
-def update_figure(selected_currency):
+def update_figure2(selected_currency):
     # print(data_frame_label[selected_currency])
     # selected = data_frame_label[selected_currency]
     if selected_currency is None:
@@ -489,8 +533,10 @@ def update_figure(selected_currency):
                                 xaxis={'title': 'Time'},
                                 yaxis={'title': 'Exchange Rate'})}
 
+######################### First Graph Callback ##############################
+
 @app.callback(Output('graph1', 'figure'), [Input('select-timeframe', 'value')])
-def update_figure(selected_timeframe):
+def update_figure1(selected_timeframe):
     if selected_timeframe is None:
         raise PreventUpdate
     else:
@@ -504,29 +550,69 @@ def update_figure(selected_timeframe):
         filtered_df = multiline_df
 
     filtered_df = filtered_df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
-    trace1_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df['AUSTRALIA - AUSTRALIAN DOLLAR/US$'],
+
+    trace1_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['AUSTRALIA - AUSTRALIAN DOLLAR/US$'],
                                   mode='lines',
                                   name='AUD/US$')
-
-    trace2_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df['EURO AREA - EURO/US$'],
-                                  mode='lines',
+    trace2_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['EURO AREA - EURO/US$'], mode='lines',
                                   name='EUR/US$')
+    trace3_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['NEW ZEALAND - NEW ZELAND DOLLAR/US$'],
+                                  mode='lines', name='NZD/US$')
+    trace4_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['UNITED KINGDOM - UNITED KINGDOM POUND/US$'],
+                                  mode='lines', name='GBP/US$')
+    trace5_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['BRAZIL - REAL/US$'],
+                                  mode='lines', name='BRL/US$')
+    trace6_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['CANADA - CANADIAN DOLLAR/US$'],
+                                  mode='lines', name='CAD/US$')
+    trace7_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['CHINA - YUAN/US$'],
+                                  mode='lines', name='CNY/US$')
+    trace8_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['HONG KONG - HONG KONG DOLLAR/US$'],
+                                  mode='lines', name='HKD/US$')
+    # trace9_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['INDIA - INDIAN RUPEE/US$'],
+    #                               mode='lines', name='INR/US$')
+    # trace10_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['KOREA - WON/US$'],
+    #                                mode='lines', name='KRW/US$')
+    trace11_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['MEXICO - MEXICAN PESO/US$'],
+                                   mode='lines', name='MXN/US$')
+    trace12_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['SOUTH AFRICA - RAND/US$'],
+                                   mode='lines', name='ZAR/US$')
+    trace13_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['SINGAPORE - SINGAPORE DOLLAR/US$'],
+                                   mode='lines', name='SGD/US$')
+    trace14_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['DENMARK - DANISH KRONE/US$'],
+                                   mode='lines', name='DKK/US$')
+    # trace15_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['JAPAN - YEN/US$'],
+    #                                mode='lines', name='JPY/US$')
+    trace16_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['MALAYSIA - RINGGIT/US$'],
+                                   mode='lines', name='MYR/US$')
+    trace17_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['NORWAY - NORWEGIAN KRONE/US$'],
+                                   mode='lines', name='NOK/US$')
+    trace18_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['SWEDEN - KRONA/US$'],
+                                   mode='lines', name='SEK/US$')
+    # trace19_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['SRI LANKA - SRI LANKAN RUPEE/US$'],
+    #                                mode='lines', name='LKR/US$')
+    trace20_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['SWITZERLAND - FRANC/US$'],
+                                   mode='lines', name='CHF/US$')
+    # trace21_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['TAIWAN - NEW TAIWAN DOLLAR/US$'],
+    #                                mode='lines', name='TWD/US$')
+    # trace22_multiline = go.Scatter(x=filtered_df['Date'], y=multiline_df['THAILAND - BAHT/US$'],
+    #                                mode='lines', name='THB/US$')
 
-    trace3_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df['NEW ZEALAND - NEW ZELAND DOLLAR/US$'],
-                                  mode='lines',
-                                  name='NZD/US$')
+    data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline, trace4_multiline,
+                      trace5_multiline, trace6_multiline, trace7_multiline, trace8_multiline,
+                      trace11_multiline, trace12_multiline,
+                      trace13_multiline, trace14_multiline, trace16_multiline,
+                      trace17_multiline, trace18_multiline, trace20_multiline, ]
 
-    data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline]
     return {'data': data_multiline,
             'layout': go.Layout(title='Foreign Exchange Rates for ' + selected_timeframe,
                                 xaxis={'title': 'Time'},
                                 yaxis={'title': 'Exchange Rate'})}
 
 
-################### End Second Graph Callback #############################
+################### Third Graph Callback #############################
 
 @app.callback(Output('graph3', 'figure'),[Input('comparison1', 'value')],[Input('comparison2', 'value')],[Input('button', 'n_clicks')],state=[State('timeframe2', 'value')])
-def update_figure2(selected_currency1, selected_currency2, n_clicks, selected_timeframe):
+def update_figure3(selected_currency1, selected_currency2, n_clicks, selected_timeframe):
     if ((selected_currency1 is None) or (selected_currency2 is None) or (selected_timeframe is None)):
         raise PreventUpdate
     else:
@@ -553,4 +639,4 @@ def update_figure2(selected_currency1, selected_currency2, n_clicks, selected_ti
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
