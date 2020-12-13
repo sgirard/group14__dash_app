@@ -1,7 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
@@ -15,11 +15,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 # Load CSV file from Datasets folder
-df1 = pd.read_csv('ForeignExchange.csv')
-
-###################### Begin First Graph ###################
-
-new_df = df1
+df1 = df2 = new_df = new_df2 = pd.read_csv('ForeignExchange.csv')
 
 dfDecade = df1
 dfDecade['Date'] = pd.to_datetime(dfDecade['Date'])
@@ -40,7 +36,7 @@ trace3_multiline = go.Scatter(x=multiline_df['Date'], y=multiline_df['NEW ZEALAN
                               mode='lines', name='NEW ZEALAND - NEW ZELAND DOLLAR/US$')
 data_multiline = [trace1_multiline, trace2_multiline, trace3_multiline]
 
-################### End First Graph ########################
+data_duoline = [trace1_multiline, trace2_multiline]
 
 # Get the conversion rate for the currencies (most recent data)
 df_aud = df1['AUSTRALIA - AUSTRALIAN DOLLAR/US$'].iloc[-1]
@@ -73,6 +69,33 @@ to_conversion_symbol = 'USD'
 amount_value = 0.0
 converted_value = 0.0
 message = ""
+selected_currency = ""
+
+data_frame_label = {
+        'Australian Dollar':'AUSTRALIA - AUSTRALIAN DOLLAR/US$',
+        'Euro Members':'EURO AREA - EURO/US$',
+        'New Zealand Dollar':'NEW ZEALAND - NEW ZELAND DOLLAR/US$',
+        'United Kingdom Pound':'UNITED KINGDOM - UNITED KINGDOM POUND/US$',
+        'Brazil Real':'BRAZIL - REAL/US$',
+        'Canada Dollar':'CANADA - CANADIAN DOLLAR/US$',
+        'China Yuan':'CHINA - YUAN/US$',
+        'Hong Kong Dollar':'HONG KONG - HONG KONG DOLLAR/US$',
+        'India Rupee':'INDIA - INDIAN RUPEE/US$',
+        'South Korea Won':'KOREA - WON/US$',
+        'Mexico Peso':'MEXICO - MEXICAN PESO/US$',
+        'South Africa Rand':'SOUTH AFRICA - RAND/US$',
+        'Singapore Dollar':'SINGAPORE - SINGAPORE DOLLAR/US$',
+        'Denmark Krone':'DENMARK - DANISH KRONE/US$',
+        'Japan' + unescape('&nbsp;') + 'Yen':'JAPAN - YEN/US$',
+        'Malaysia Ringgit':'MALAYSIA - RINGGIT/US$',
+        'Norway Krone':'NORWAY - NORWEGIAN KRONE/US$',
+        'Sweden Krona':'SWEDEN - KRONA/US$',
+        'Sri Lanka Rupee':'SRI LANKA - SRI LANKAN RUPEE/US$',
+        'Switzerland Franc':'SWITZERLAND - FRANC/US$',
+        'Taiwan New Dollar':'TAIWAN - NEW TAIWAN DOLLAR/US$',
+        'Thailand Baht':'THAILAND - BAHT/US$',
+}
+
 
 conversion_dict = {
                     'AUD':df_aud, 'BRL':df_brl, 'CAD':df_cad, 'CHF':df_chf, 'CNY':df_cny,
@@ -121,6 +144,7 @@ dropdown_options = [
 ]
 
 
+
 app.layout = html.Div([
 
     html.H6('Convert from:', style={'color': '#666'}),
@@ -147,7 +171,7 @@ app.layout = html.Div([
     dcc.Input(
         id='num-amount',
         type='number',
-        debounce=False,
+        debounce=True,
         placeholder=0.00,
     ),
 
@@ -211,13 +235,6 @@ app.layout = html.Div([
 ######################### End First Graph ####################
 ######################## Begin Second Graph ##################
 
-# html.H1(children='Python Dash',
-#         style={
-#             'textAlign': 'center',
-#             'color': '#ef3e18'
-#         }
-#         ),
-# html.Hr(style={'color': '#7FDBFF'}),
 html.H3('Multi Line chart', style={'color': '#df1e56'}),
 dcc.Graph(id='graph2',
           figure={
@@ -228,37 +245,125 @@ dcc.Graph(id='graph2',
           }
           ),
 html.Div('Please select a currency', style={'color': '#ef3e18', 'margin': '10px'}),
-dcc.Dropdown(id='select-currency',
+# dcc.Dropdown(
+#         id='select-currency',
+#         options=data_frame_label,
+#         placeholder="Select a currency",
+#         value='AUSTRALIA - AUSTRALIAN DOLLAR/US$',
+#     ),
+dcc.Dropdown(
+    id='select-currency',
+    placeholder="Select a currency",
     options=[
-        {'label': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$', 'value': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$'},
-        {'label': 'EURO AREA - EURO/US$', 'value': 'EURO AREA - EURO/US$'},
-        {'label': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$', 'value': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$'},
-        {'label': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$', 'value': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$'},
-        {'label': 'BRAZIL - REAL/US$', 'value': 'BRAZIL - REAL/US$'},
-        {'label': 'CANADA - CANADIAN DOLLAR/US$', 'value': 'CANADA - CANADIAN DOLLAR/US$'},
-        {'label': 'CHINA - YUAN/US$', 'value': 'CHINA - YUAN/US$'},
-        {'label': 'HONG KONG - HONG KONG DOLLAR/US$', 'value': 'HONG KONG - HONG KONG DOLLAR/US$'},
-        {'label': 'INDIA - INDIAN RUPEE/US$', 'value': 'INDIA - INDIAN RUPEE/US$'},
-        {'label': 'KOREA - WON/US$', 'value': 'KOREA - WON/US$'},
-        {'label': 'MEXICO - MEXICAN PESO/US$', 'value': 'MEXICO - MEXICAN PESO/US$'},
-        {'label': 'SOUTH AFRICA - RAND/US$', 'value': 'SOUTH AFRICA - RAND/US$'},
-        {'label': 'SINGAPORE - SINGAPORE DOLLAR/US$', 'value': 'SINGAPORE - SINGAPORE DOLLAR/US$'},
-        {'label': 'DENMARK - DANISH KRONE/US$', 'value': 'DENMARK - DANISH KRONE/US$'},
-        {'label': 'JAPAN - YEN/US$', 'value': 'JAPAN - YEN/US$'},
-        {'label': 'MALAYSIA - RINGGIT/US$', 'value': 'MALAYSIA - RINGGIT/US$'},
-        {'label': 'NORWAY - NORWEGIAN KRONE/US$', 'value': 'NORWAY - NORWEGIAN KRONE/US$'},
-        {'label': 'SWEDEN - KRONA/US$', 'value': 'SWEDEN - KRONA/US$'},
-        {'label': 'SRI LANKA - SRI LANKAN RUPEE/US$', 'value': 'SRI LANKA - SRI LANKAN RUPEE/US$'},
-        {'label': 'SWITZERLAND - FRANC/US$', 'value': 'SWITZERLAND - FRANC/US$'},
-        {'label': 'TAIWAN - NEW TAIWAN DOLLAR/US$', 'value': 'TAIWAN - NEW TAIWAN DOLLAR/US$'},
-        {'label': 'THAILAND - BAHT/US$', 'value': 'THAILAND - BAHT/US$'},
+         {'label': 'Australian Dollar', 'value': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$'},
+         {'label': 'Euro Members', 'value': 'EURO AREA - EURO/US$'},
+         {'label': 'New Zealand Dollar', 'value': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$'},
+         {'label': 'United Kingdom Pound', 'value': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$'},
+         {'label': 'Brazil Real', 'value': 'BRAZIL - REAL/US$'},
+         {'label': 'Canada Dollar', 'value': 'CANADA - CANADIAN DOLLAR/US$'},
+         {'label': 'China Yuan', 'value': 'CHINA - YUAN/US$'},
+         {'label': 'Hong Kong Dollar', 'value': 'HONG KONG - HONG KONG DOLLAR/US$'},
+         {'label': 'India Rupee', 'value': 'INDIA - INDIAN RUPEE/US$'},
+         {'label': 'South Korea Won', 'value': 'KOREA - WON/US$'},
+         {'label': 'Mexico Peso', 'value': 'MEXICO - MEXICAN PESO/US$'},
+         {'label': 'South Africa Rand', 'value': 'SOUTH AFRICA - RAND/US$'},
+         {'label': 'Singapore Dollar', 'value': 'SINGAPORE - SINGAPORE DOLLAR/US$'},
+         {'label': 'Denmark Krone', 'value': 'DENMARK - DANISH KRONE/US$'},
+         {'label': 'Japan' + unescape('&nbsp;') + 'Yen', 'value': 'JAPAN - YEN/US$'},
+         {'label': 'Malaysia Ringgit', 'value': 'MALAYSIA - RINGGIT/US$'},
+         {'label': 'Norway Krone', 'value': 'NORWAY - NORWEGIAN KRONE/US$'},
+         {'label': 'Sweden Krona', 'value': 'SWEDEN - KRONA/US$'},
+         {'label': 'Sri Lanka Rupee', 'value': 'SRI LANKA - SRI LANKAN RUPEE/US$'},
+         {'label': 'Switzerland Franc', 'value': 'SWITZERLAND - FRANC/US$'},
+         {'label': 'Taiwan New Dollar', 'value': 'TAIWAN - NEW TAIWAN DOLLAR/US$'},
+         {'label': 'Thailand Baht', 'value': 'THAILAND - BAHT/US$'},
     ],
     value='AUSTRALIA - AUSTRALIAN DOLLAR/US$',
-             )
-])
+    ),
 
 
 ######################## End Second Graph ####################
+#################### Begin Third Graph #######################
+
+    html.Hr(),
+    html.H3('Multi Line chart', style={'color': '#df1e56'}),
+    dcc.Graph(id='graph3',
+              figure={
+                  'data': data_multiline,
+                  'layout': go.Layout(
+                      title='Foreign Exchange Rate 2000-2019',
+                      xaxis={'title': 'Time'}, yaxis={'title': 'Exchange Rate'})
+              }
+              ),
+    html.Div('Please select a first country to compare.', style={'color': '#ef3e18', 'margin': '10px'}),
+    dcc.Dropdown(
+        id='comparison1',
+        placeholder="Select a currency",
+        options=[
+            {'label': 'Australian Dollar', 'value': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$'},
+            {'label': 'Euro Members', 'value': 'EURO AREA - EURO/US$'},
+            {'label': 'New Zealand Dollar', 'value': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$'},
+            {'label': 'United Kingdom Pound', 'value': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$'},
+            {'label': 'Brazil Real', 'value': 'BRAZIL - REAL/US$'},
+            {'label': 'Canada Dollar', 'value': 'CANADA - CANADIAN DOLLAR/US$'},
+            {'label': 'China Yuan', 'value': 'CHINA - YUAN/US$'},
+            {'label': 'Hong Kong Dollar', 'value': 'HONG KONG - HONG KONG DOLLAR/US$'},
+            {'label': 'India Rupee', 'value': 'INDIA - INDIAN RUPEE/US$'},
+            {'label': 'South Korea Won', 'value': 'KOREA - WON/US$'},
+            {'label': 'Mexico Peso', 'value': 'MEXICO - MEXICAN PESO/US$'},
+            {'label': 'South Africa Rand', 'value': 'SOUTH AFRICA - RAND/US$'},
+            {'label': 'Singapore Dollar', 'value': 'SINGAPORE - SINGAPORE DOLLAR/US$'},
+            {'label': 'Denmark Krone', 'value': 'DENMARK - DANISH KRONE/US$'},
+            {'label': 'Japan' + unescape('&nbsp;') + 'Yen', 'value': 'JAPAN - YEN/US$'},
+            {'label': 'Malaysia Ringgit', 'value': 'MALAYSIA - RINGGIT/US$'},
+            {'label': 'Norway Krone', 'value': 'NORWAY - NORWEGIAN KRONE/US$'},
+            {'label': 'Sweden Krona', 'value': 'SWEDEN - KRONA/US$'},
+            {'label': 'Sri Lanka Rupee', 'value': 'SRI LANKA - SRI LANKAN RUPEE/US$'},
+            {'label': 'Switzerland Franc', 'value': 'SWITZERLAND - FRANC/US$'},
+            {'label': 'Taiwan New Dollar', 'value': 'TAIWAN - NEW TAIWAN DOLLAR/US$'},
+            {'label': 'Thailand Baht', 'value': 'THAILAND - BAHT/US$'},
+        ],
+        value='AUSTRALIA - AUSTRALIAN DOLLAR/US$'
+    ),
+    html.Div('Please select a second country to compare.', style={'color': '#ef3e18', 'margin': '10px'}),
+    dcc.Dropdown(
+        id='comparison2',
+        placeholder="Select a currency",
+        options=[
+            {'label': 'Australian Dollar', 'value': 'AUSTRALIA - AUSTRALIAN DOLLAR/US$'},
+            {'label': 'Euro Members', 'value': 'EURO AREA - EURO/US$'},
+            {'label': 'New Zealand Dollar', 'value': 'NEW ZEALAND - NEW ZELAND DOLLAR/US$'},
+            {'label': 'United Kingdom Pound', 'value': 'UNITED KINGDOM - UNITED KINGDOM POUND/US$'},
+            {'label': 'Brazil Real', 'value': 'BRAZIL - REAL/US$'},
+            {'label': 'Canada Dollar', 'value': 'CANADA - CANADIAN DOLLAR/US$'},
+            {'label': 'China Yuan', 'value': 'CHINA - YUAN/US$'},
+            {'label': 'Hong Kong Dollar', 'value': 'HONG KONG - HONG KONG DOLLAR/US$'},
+            {'label': 'India Rupee', 'value': 'INDIA - INDIAN RUPEE/US$'},
+            {'label': 'South Korea Won', 'value': 'KOREA - WON/US$'},
+            {'label': 'Mexico Peso', 'value': 'MEXICO - MEXICAN PESO/US$'},
+            {'label': 'South Africa Rand', 'value': 'SOUTH AFRICA - RAND/US$'},
+            {'label': 'Singapore Dollar', 'value': 'SINGAPORE - SINGAPORE DOLLAR/US$'},
+            {'label': 'Denmark Krone', 'value': 'DENMARK - DANISH KRONE/US$'},
+            {'label': 'Japan' + unescape('&nbsp;') + 'Yen', 'value': 'JAPAN - YEN/US$'},
+            {'label': 'Malaysia Ringgit', 'value': 'MALAYSIA - RINGGIT/US$'},
+            {'label': 'Norway Krone', 'value': 'NORWAY - NORWEGIAN KRONE/US$'},
+            {'label': 'Sweden Krona', 'value': 'SWEDEN - KRONA/US$'},
+            {'label': 'Sri Lanka Rupee', 'value': 'SRI LANKA - SRI LANKAN RUPEE/US$'},
+            {'label': 'Switzerland Franc', 'value': 'SWITZERLAND - FRANC/US$'},
+            {'label': 'Taiwan New Dollar', 'value': 'TAIWAN - NEW TAIWAN DOLLAR/US$'},
+            {'label': 'Thailand Baht', 'value': 'THAILAND - BAHT/US$'},
+        ],
+        value='EURO AREA - EURO/US$'
+    ),
+    html.Div('Please enter a year between 2000 and 2019 to filter timeframe of the graph.', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.Div(dcc.Input(id='timeframe2', type='text')),
+    html.Br(),
+    html.Button('Submit', id='button'),
+    html.Br(),
+    html.Br()
+])
+
+#################### End Third Graph #########################
 
 @app.callback(
     Output('aud', 'children'),
@@ -326,7 +431,8 @@ def update_convert_from(value):
     else:
         global from_conversion_symbol
         from_conversion_symbol = value
-    return ['Conversion Rate, USD to {} : {}'.format(value, np.round(conversion_dict[value],2)), amount_value]
+    # return ['Conversion Rate, USD to {} : {}'.format(value, np.round(conversion_dict[value],2)), amount_value]
+    return['', amount_value]
 
 
 @app.callback(
@@ -340,7 +446,8 @@ def update_convert_to(value):
     else:
         global to_conversion_symbol
         to_conversion_symbol = value
-    return ['Conversion Rate, USD to {} : {}'.format(value, np.round(conversion_dict[value],2))]
+    # return ['Conversion Rate, USD to {} : {}'.format(value, np.round(conversion_dict[value],2))]
+    return['', '']
 
 @app.callback(
     Output('message_container', 'children'),
@@ -367,9 +474,12 @@ def update_message(value, value2):
 
 ################### End First Graph Callback ##############################
 ######################### Begin Second Graph ##############################
+#selected_currency = conversion_dict['value']
 
 @app.callback(Output('graph2', 'figure'), [Input('select-currency', 'value')])
 def update_figure(selected_currency):
+    # print(data_frame_label[selected_currency])
+    # selected = data_frame_label[selected_currency]
     if selected_currency is None:
         raise PreventUpdate
     else:
@@ -419,7 +529,31 @@ def update_figure(selected_timeframe):
 
 ################### End Second Graph Callback #############################
 
-
+@app.callback(Output('graph3', 'figure'),[Input('comparison1', 'value')],[Input('comparison2', 'value')],[Input('button', 'n_clicks')],state=[State('timeframe2', 'value')])
+def update_figure2(selected_currency1, selected_currency2, n_clicks, selected_timeframe):
+    if ((selected_currency1 is None) or (selected_currency2 is None) or (selected_timeframe is None)):
+        raise PreventUpdate
+    else:
+        filtered_df = multiline_df
+        currency1 = selected_currency1
+        currency2 = selected_currency2
+        if(selected_timeframe != None):
+            if(selected_timeframe.isdigit()):
+                if (int(selected_timeframe) >= 2000 and int(selected_timeframe) <= 2019):
+                    dfTime = new_df2
+                    dfTime['Date'] = pd.to_datetime(dfTime['Date'])
+                    dfCurrentTime = dfTime[dfTime['Date'].dt.year >= int(selected_timeframe)]
+                    filtered_df = dfCurrentTime
+        filtered_df = filtered_df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+        newTrace1_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df[currency1],
+                                    mode='lines', name=currency1)
+        newTrace2_multiline = go.Scatter(x=filtered_df['Date'], y=filtered_df[currency2], mode='lines',
+                                    name=currency2)
+        data_multiline2 = [newTrace1_multiline, newTrace2_multiline]
+    return {'data': data_multiline2,
+            'layout': go.Layout(title='Foreign Exchange Rates for ' + selected_currency1 + ' and' + selected_currency2,
+                                xaxis={'title': 'Time'},
+                                yaxis={'title': 'Exchange Rate'})}
 
 
 if __name__ == '__main__':
