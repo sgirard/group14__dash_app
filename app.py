@@ -1,12 +1,6 @@
 import dash
-# import dash_core_components as dcc
-# import dash_html_components as html
-#
-app = dash.Dash(__name__, suppress_callback_exceptions=True, serve_locally=True)
-#
-# app.layout = html.Div([
-#     dcc.Location(id='url', refresh=False),
-#     html.Div(id='page-content')
-# ])
 
+app = dash.Dash(__name__, suppress_callback_exceptions=True, serve_locally=True, meta_tags=[
+    {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'}
+    ])
 server = app.server
