@@ -25,7 +25,9 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'))
 def display_page(pathname):
-    if pathname == '/currency_converter':
+    if pathname == '/' or pathname == 'None':
+         return currency_converter
+    elif pathname == '/currency_converter':
          return currency_converter
     elif pathname == '/high_level_overview':
          return high_level_overview
