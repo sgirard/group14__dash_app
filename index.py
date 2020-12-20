@@ -16,7 +16,7 @@ from layouts import currency_converter, \
 
 import callbacks
 
-from app import app
+from app import app, server
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
