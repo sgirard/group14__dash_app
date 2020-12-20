@@ -8,7 +8,6 @@ from dash.dependencies import Input, Output, State
 # from html import unescape
 # from dash.exceptions import PreventUpdate
 
-from app import app
 from layouts import currency_converter, \
                     high_level_overview, \
                     single_currency_focus, \
@@ -16,6 +15,8 @@ from layouts import currency_converter, \
                     user_instructions
 
 import callbacks
+
+from app import app
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -25,7 +26,7 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'))
 def display_page(pathname):
-    if pathname == '/' or pathname == 'None':
+    if pathname == '/':
          return currency_converter
     elif pathname == '/currency_converter':
          return currency_converter

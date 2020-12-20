@@ -2,7 +2,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 import pandas as pd
-from app import app
+
 from layouts import multiline_df, \
                     data_frame_label, \
                     new_df2, dfCurrentYear, \
@@ -13,6 +13,8 @@ from layouts import multiline_df, \
                     df_aud, df_brl, df_cad, df_cny, df_dkk, df_eur, df_hkd, df_inr, \
                     df_jpy, df_myr, df_mxn, df_nzd, df_nok, df_sgd, df_zar, df_krw, \
                     df_lkr, df_sek, df_chf, df_twd, df_thb, df_gbp, df_usd
+
+from app import app
 
 
 ###################### Currency Converter Callback #######################
