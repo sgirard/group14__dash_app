@@ -13,7 +13,7 @@ message = ""
 selected_currency = ""
 
 # Load CSV file from Datasets folder
-df1 = new_df = new_df2 = pd.read_csv('../Datasets/ForeignExchange.csv') #df2
+df1 = new_df = new_df2 = pd.read_csv('./datasets/ForeignExchange.csv') #df2
 
 dfDecade = df1
 dfDecade['Date'] = pd.to_datetime(dfDecade['Date'])
