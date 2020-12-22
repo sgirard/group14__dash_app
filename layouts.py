@@ -500,39 +500,38 @@ user_instructions = html.Div([
             
             ##### To Convert one currency to another:
 
-                * From the Convert tab, select a currency using the "Convert From" dropdown menu.
-                      * For example, If you want to convert 10 US dollars to a equivalent sum of Euros, you would select "U.S Dollar" from the dropdown menu.
-
-                * Select a currency from the "Convert To" dropdown menu and choose the currency you wish to convert to.
-                      * For the above example, you would select "European Union Euros"
-                * In the input field under "Amount", Type the amount of the currency you wish to convert.
-                      * In the Above example, you would type 10 into the input field.
-                * The application will display the result below the user selections.
-                * Additionally, the conversions for all currencies are shown in the large output box. These currencies are updated as each digit is entered into the "Amount" input field.
+            * From the Convert tab, select a currency using the "Convert From" dropdown menu.
+            * For example, If you want to convert 10 US dollars to a equivalent sum of Euros, you would select "U.S Dollar" from the dropdown menu.
+            * Select a currency from the "Convert To" dropdown menu and choose the currency you wish to convert to.
+            * For the above example, you would select "European Union Euros"
+            * In the input field under "Amount", Type the amount of the currency you wish to convert.
+            * In the Above example, you would type 10 into the input field.
+            * The application will display the result below the user selections.
+            * Additionally, the conversions for all currencies are shown in the large output box. These currencies are updated as each digit is entered into the "Amount" input field.
 
             ##### To View the Exchange Rate changes for the Year via a visual representation:
 
-                * Click or tap the "Overview" tab at the top of the screen.
-                * Under the words "Foreign Exchange Rates for the Year", you should see a visual representation of the currency rates as imported from the Data.
-                * The chart is interactive. Use the icons on the top-right corner of the graph to modify the views. Tooltips should appear when you mouse over the top right corner of the graph.
-                * Note the ability to select timeframes by clicking and dragging over a section of the graph. The graph can be reset by clicking the "Reset axes" icon on the top right of the graph.
-                * Timeframes for the current year, decade, and all time can also be quickly accessed by using the dropdown menu below the graph.
+            * Click or tap the "Overview" tab at the top of the screen.
+            * Under the words "Foreign Exchange Rates for the Year", you should see a visual representation of the currency rates as imported from the Data.
+            * The chart is interactive. Use the icons on the top-right corner of the graph to modify the views. Tooltips should appear when you mouse over the top right corner of the graph.
+            * Note the ability to select timeframes by clicking and dragging over a section of the graph. The graph can be reset by clicking the "Reset axes" icon on the top right of the graph.
+            * Timeframes for the current year, decade, and all time can also be quickly accessed by using the dropdown menu below the graph.
 
             ##### To view a more focused chart based on a single currency of your choosing:
 
-                * Click or tap the "Focus" tab at the top of the screen.
-                * Under the text "Please select a currency", in the interface, select a currency you wish to view.
-                * The graph above the dropdown selector will display the selected currency timeseries.
-                * Be sure to explore the tooltips at the top right corner of the graph.
+            * Click or tap the "Focus" tab at the top of the screen.
+            * Under the text "Please select a currency", in the interface, select a currency you wish to view.
+            * The graph above the dropdown selector will display the selected currency timeseries.
+            * Be sure to explore the tooltips at the top right corner of the graph.
 
             ##### To view a chart focused on comparison between two currencies of your choosing:
 
-                * Click or tap the "Compare" tab at the top of the screen.
-                * Under the text "Please select a first country to compare", in the interface, select your first Currency
-                * Under the text "Please select a second country to compare", in the interface, select your second Currency
-                * Under the text "Please enter a year between 2000 and 2019 to filter timeframe of the graph", select a year between 2000 and 2019. This year should indicate the center of the time period you wish to represent.
-                * You should see your graph updated to reflect the data you entered.
-                * Be sure to explore the tooltips at the top right corner of the graph.
+            * Click or tap the "Compare" tab at the top of the screen.
+            * Under the text "Please select a first country to compare", in the interface, select your first Currency
+            * Under the text "Please select a second country to compare", in the interface, select your second Currency
+            * Under the text "Please enter a year between 2000 and 2019 to filter timeframe of the graph", select a year between 2000 and 2019. This year should indicate the center of the time period you wish to represent.
+            * You should see your graph updated to reflect the data you entered.
+            * Be sure to explore the tooltips at the top right corner of the graph.
         '''),
     ]),
 ])
